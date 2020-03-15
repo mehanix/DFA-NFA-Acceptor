@@ -179,30 +179,44 @@ int main()
 
     string word;
     if (status == true) {
-            cout<<"Automat incarcat cu succes! :)"<<endl;
-        while (true) {
-            cout<<"Introdu cuvantul de verificat:[sau EXIT pentru a iesi]"<<endl;
-            cin>>word;
-            if(word == "EXIT" || word =="exit")
-                break;
-            cout<<"Working on it...\n";
+            cout<<"\nAutomat incarcat cu succes! :)"<<endl;
+            choice=-1;
+            while (choice == -1){
+                cout<<"\nAlege o optiune:\n1.Testeaza apartenenta cuvintelor in automat\n2.Genereaza primele 100 cuvinte acceptate de automat\n\nScrie numarul optiunii alese:";
+                cin>>choice;
+                if (choice == 1){
 
-            ///creez matrice vizitati pt cuv asta
-            ///lungimea max = lungimea cuvantului
-            matrice_vizitati.resize(nr_stari+1);
-            for(vector<bool> &v:matrice_vizitati) {
-                v.resize(word.length()+1);
-                for (auto&& x:v)
-                    x=false;
+                while (true) {
+                    cout<<"Introdu cuvantul de verificat:[sau EXIT pentru a iesi]"<<endl;
+                    cin>>word;
+                    if(word == "EXIT" || word =="exit")
+                        break;
+                    cout<<"Working on it...\n";
+
+                    ///creez matrice vizitati pt cuv asta
+                    ///lungimea max = lungimea cuvantului
+                    matrice_vizitati.resize(nr_stari+1);
+                    for(vector<bool> &v:matrice_vizitati) {
+                        v.resize(word.length()+1);
+                        for (auto&& x:v)
+                            x=false;
+                    }
+                    verify(word,stare_initiala,0,word.length(),graf,0,stari_finale,matrice_vizitati);
+
+                    if(is_valid)
+                        cout<<"Cuvant acceptat de automat!\n";
+                    else cout<<"Cuvant neacceptat de automat!\n";
+                    is_valid=0;
+
+                    }
+
+                }
+                else if (choice==2) {
+                    cout<<"Generez cuvintele acceptate...\n";
+                }
             }
-            verify(word,stare_initiala,0,word.length(),graf,0,stari_finale,matrice_vizitati);
 
-            if(is_valid)
-                cout<<"Cuvant acceptat de automat!\n";
-            else cout<<"Cuvant neacceptat de automat!\n";
-            is_valid=0;
 
-            }
 
     }
     else {
