@@ -10,7 +10,7 @@ using namespace std;
 
 typedef vector<map<char,vector<int> > > GRAF;
 
-ifstream fin("test3.in");
+ifstream fin("test2.in");
 int is_valid=0; //TODO: scapa cumva de acest global
 
 void adauga_arc(GRAF &graf, int q1, int q2, char c) {
@@ -195,29 +195,32 @@ void generate(string word, int nod_curent, GRAF& graf, int current_lg, vector<in
 }
 */
 
-vector<vector<int>> results;
+vector<vector<pair<int,char>>> results;
 void generate(GRAF& graf,int stare_initiala,vector<int>& stari_finale, vector<vector<bool>>& matrice_vizitati,int max_length){
-    queue<vector<int> > q;
-    vector<int> path;
-    path.push_back(stare_initiala);
+      queue<vector<pair<int,char>> > q;
+    vector<pair<int,char>> path;
+    path.push_back(make_pair(stare_initiala,' '));
 
     q.push(path);
     path.clear();
     while (!q.empty()) {
         path = q.front();
         q.pop();
-        int elem = path.back();
+        pair<int,char> elem_p = path.back();
+        int elem = elem_p.first;
         if(is_accepting_state(elem,stari_finale))
             results.push_back(path);
-        else if(matrice_vizitati[elem][path.size()] == false)
+        if(matrice_vizitati[elem][path.size()] == false){
             for (auto &mp: graf[elem]) {
                 for(auto ends=mp.second.begin();ends!=mp.second.end();++ends) {
-                    vector<int>new_path(path);
-                    new_path.push_back(*ends);
-                    q.push(new_path);
+                    vector<pair<int,char>>new_path(path);
+                    if (results.size() < 100){
+                        new_path.push_back(make_pair(*ends, mp.first));
+                        q.push(new_path);
+                        }
                 }
             matrice_vizitati[elem][path.size()] = true;
-
+            }
             }
 
 
@@ -225,6 +228,8 @@ void generate(GRAF& graf,int stare_initiala,vector<int>& stari_finale, vector<ve
 
 
 }
+
+
 
 
 bool load_from_file(GRAF &graf, int &nr_stari, int &nr_tranzitii, int &stare_initiala, int &nr_stari_finale, vector<int>& stari_finale) {
@@ -370,10 +375,15 @@ int main()
                     cout<<"Generez cuvintele acceptate...\n";
 
                     generate(graf,stare_initiala,stari_finale,matrice_vizitati,100);
-                    for(auto &x:results){
-                        for(auto &i:x)
-                            cout<<i<<' ';
-                        cout<<'\n';
+                    int cnt = 0;
+                    for(auto x = results.begin();x< results.end(); x++){
+                        if(cnt<100) {
+                            cout<<"("<<++cnt<<"):";
+                            for(auto &i:*x)
+                                cout<<i.second;
+                            cout<<'\n';
+                        }
+
                     }
 
 
