@@ -2,11 +2,12 @@
 1584134710 source:/home/nix/Desktop/proiect_lfa/main.cpp
 	<iostream>
 
-1584278201 source:/home/nix/Desktop/LFA_proiect_1/main.cpp
+1584295695 source:/home/nix/Desktop/LFA_proiect_1/main.cpp
 	<iostream>
 	<map>
 	<vector>
 	<fstream>
 	<string>
+	<queue>
 	<algorithm>
 
