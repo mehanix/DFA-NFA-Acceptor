@@ -24,7 +24,7 @@ Totodata, folosesc matricea de vizite pentru a avea grija sa nu ma blochez in bu
 * Incarcare automat custom din fisierul automat_custom.in
 * Incarcare automat generat (cel cu 3004 noduri si 2002002 muchii) pentru a demonstra functionalitatea matricii de vizitati
 * Testarea cuvintelor in automat
-* Generarea primelor 100 cuvinte acceptate de automat
+* Generarea cele mai scurte 100 cuvinte acceptate de automat
 
 ## Structura fisier intrare
 ```
