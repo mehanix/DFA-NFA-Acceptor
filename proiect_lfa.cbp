@@ -32,6 +32,7 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="automat_custom.in" />
 		<Unit filename="main.cpp" />
 		<Unit filename="test.in" />
 		<Unit filename="test2.in" />

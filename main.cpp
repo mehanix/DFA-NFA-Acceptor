@@ -10,8 +10,8 @@ using namespace std;
 
 typedef vector<map<char,vector<int> > > GRAF;
 
-ifstream fin("test2.in");
-int is_valid=0; //TODO: scapa cumva de acest global
+ifstream fin("automat_custom.in");
+
 
 void adauga_arc(GRAF &graf, int q1, int q2, char c) {
     /// adauga nodului de start(q1) faptul ca litera "c" il trimite in nodul end(q2) //
@@ -19,9 +19,9 @@ void adauga_arc(GRAF &graf, int q1, int q2, char c) {
 }
 
 void afiseaza_graf(GRAF graf, int nr_stari) {
-    //itereaza prin noduri
+    ///itereaza prin noduri
     for(int i=0;i<=nr_stari;i++) {
-        // ia map-ul asociat nodului si itereaza-i prin chei
+        /// ia map-ul asociat nodului si itereaza-i prin chei
         cout<<"pentru "<<i<<"::\n";
         for(auto mp = graf[i].begin(); mp!= graf[i].end();++mp) {
             cout<<mp->first<<":{ ";
@@ -41,9 +41,10 @@ void afiseaza_graf(GRAF graf, int nr_stari) {
  * nod_curent: nodul la care a ajuns functia
  * i_char_curent: indicele caracterului la care a ajuns functia
  * i_char_final: indicele caracterului final
- * graF: graful automatului
+ * graf: graful automatului
  * stari_finale: vectorul de stari finale
  * */
+int is_valid=0;
 void verify(string& word, int nod_curent, int i_char_curent, const int i_char_final, GRAF& graf, int current_lg, vector<int>& stari_finale, vector<vector<bool>>& matrice_vizitati) {
     ///daca nu s-a mai ajuns aici cu lungimea asta, mergi pe aici///
 	if(matrice_vizitati[nod_curent][current_lg] == false && is_valid == 0) {
@@ -59,141 +60,20 @@ void verify(string& word, int nod_curent, int i_char_curent, const int i_char_fi
         /// Verifica de unde poti pleca din nodul nod_curent cu caracterul word[i_char_curent] ///
         /// itereaza prin vectorul dat de graf[nod_curent][word[i_char_curent]] si reapeleaza functia cu caracterul urmator ///
         char c = word[i_char_curent];
-        /*cout<<"Din litera "<<c<<" si nodul "<<nod_curent<<" ajungi in:";
-        for(int &ends : graf[nod_curent][c]) {
-            cout<< ends<<' ';
-        }
-        cout<<'\n';
-        */
-
             for(auto &ends : graf[nod_curent][c]) {
                 if(matrice_vizitati[ends][current_lg] == false){
-                   // cout<<"Plec pe "<<c<<" "<<ends<<endl;
                     matrice_vizitati[ends][current_lg] = true;
                     verify(word, ends,i_char_curent+1, i_char_final, graf,current_lg+1, stari_finale, matrice_vizitati);
                 }
 
             }
-
-        /// Daca trece prin tot graful si nu reuseste sa gaseasca un drum care sa accepte cuvantul, atunci e neacceptat ///
     }
 }
 
 bool is_accepting_state(int nod, vector<int>& stari_finale){
     return find(stari_finale.begin(), stari_finale.end(),nod)!=stari_finale.end();
 }
-/*
-struct deque_gen{
-    deque<pair<int,char>> q;
-    int len=0;
 
-    public:
-    void add(pair<int,char> val, bool is_accepting){
-    ///daca e accepting state, il pun in fata cu orice pret. altfel, doar daca mai e loc de el, si la sfarsit.
-        if(is_accepting){
-            if(len>=100){
-                    q.pop_back();
-                    len--;
-                }
-            q.push_front(val);
-            len++;
-        }
-        else if(len<100){
-            q.push_back(val);
-            len++;
-        }
-
-    }
-    void remove_front(){
-        q.pop_front();
-        len--;
-    }
-};
-
-vector<string> results;
-void generate(GRAF& graf, int nod_start, vector<int>& stari_finale, vector<vector<bool>>& matrice_vizitati, int max_length){
-    string word="";
-    deque_gen current_level;
-    deque_gen next_level;
-    current_level.add(make_pair(nod_start,'w'),is_accepting_state(nod_start,stari_finale));
-    pair<int,char> current;
-    do {
-        cout<<"current level:";
-        for(auto i:current_level.q){
-            cout<<i.first<<' '<<i.second<<' ';
-        } cout<<'\n';
-
-        current = current_level.q.front();
-        //cout<<current.first<<' '<<current.second;
-        int current_state = current.first;
-        char c = current.second;
-        current_level.remove_front();
-        word.push_back(c);
-        //if(is_accepting_state(current.first,stari_finale))
-            cout<<word<<'\n';
-            //results.push_back(word);
-        ///ia toate nodurile care pleaca din current_node
-        for(auto mp = graf[current_state].begin(); mp!= graf[current_state].end();++mp) {
-            cout<<mp->first<<":{ ";
-            //pentru fiecare cheie, iterez prin elem. din vectorul lui
-            for(auto node=mp->second.begin();node!=mp->second.end();++node) {
-                cout<<*node<<" ";
-                current_level.add(make_pair(*node,mp->first), is_accepting_state(current.first,stari_finale));
-            }
-            cout<<"}\n";
-
-        }
-           int b;
-            cin>>b;
-    } while(current_level.len!=0 || next_level.len!=0);
-
-
-}*/
-
-/*
-vector<string> results;
-void generate(string word, int nod_curent, GRAF& graf, int current_lg, vector<int>& stari_finale, vector<vector<bool>>& matrice_vizitati,int max_length) {
-    if(results.size()<=100){
-
-    if(matrice_vizitati[nod_curent][current_lg] == false && word.length() <= max_length) {
-        //cout<<"sunt la:"<<word<<' '<<nod_curent<<'\n';
-        ///ia mapul asociat nodului
-        ///itereaza prin litere
-        for(auto mp = graf[nod_curent].begin(); mp!= graf[nod_curent].end();++mp) {
-            ///adauga litera la cuvant
-            //cout<<mp->first;
-
-            ///Daca am ajuns intr-un nod marcat ca nod final => cuvant acceptat de automat
-
-                /// Verifica de unde poti pleca din nodul nod_curent cu orice caracter ///
-                /// itereaza prin vectorul dat de graf[nod_curent][char_curent] si reapeleaza functia cu caracterul urmator ///
-                char c = mp->first;
-                if(current_lg<=100) {
-                for(auto &ends : graf[nod_curent][c]) {
-                    word.push_back(c);
-
-                        if(matrice_vizitati[ends][current_lg] == false){
-                            cout<<"Plec pe "<<c<<" "<<ends<<endl;
-                            matrice_vizitati[ends][current_lg] = true;
-                            if(find(stari_finale.begin(), stari_finale.end(), ends) != stari_finale.end())
-                                {
-                                    cout<<"GASIT "<<":"<<word<<'\n';
-                                    results.push_back(word);
-                                }
-                            generate(word, ends,graf,current_lg+1, stari_finale, matrice_vizitati,max_length);
-                            matrice_vizitati[ends][current_lg] = false;
-                            word.pop_back();
-                        }
-                    }
-
-
-        }
-    }
-
-}
-}
-}
-*/
 
 vector<vector<pair<int,char>>> results;
 void generate(GRAF& graf,int stare_initiala,vector<int>& stari_finale, vector<vector<bool>>& matrice_vizitati,int max_length){
@@ -221,16 +101,13 @@ void generate(GRAF& graf,int stare_initiala,vector<int>& stari_finale, vector<ve
                 }
             matrice_vizitati[elem][path.size()] = true;
             }
-            }
+        }
 
 
     }
 
 
 }
-
-
-
 
 bool load_from_file(GRAF &graf, int &nr_stari, int &nr_tranzitii, int &stare_initiala, int &nr_stari_finale, vector<int>& stari_finale) {
         /// citire automat ///
@@ -300,10 +177,7 @@ bool load_big(GRAF &graf, int &nr_stari, int &nr_tranzitii, int &stare_initiala,
     }
     return true;
 
-
-
 }
-
 
 int main()
 {
@@ -327,14 +201,12 @@ int main()
     }
 
 
-
-
     string word;
     if (status == true) {
             cout<<"\nAutomat incarcat cu succes! :)"<<endl;
             choice=-1;
             while (choice == -1){
-                cout<<"\nAlege o optiune:\n1.Testeaza apartenenta cuvintelor in automat\n2.Genereaza primele 100 cuvinte acceptate de automat\n\nScrie numarul optiunii alese:";
+                cout<<"\nAlege o optiune:\n1.Testeaza apartenenta cuvintelor in automat\n2.Genereaza cele mai scurte 100 cuvinte acceptate de automat\n\nScrie numarul optiunii alese:";
                 cin>>choice;
                 if (choice == 1){
 
@@ -372,7 +244,7 @@ int main()
                         for (auto&& x:v)
                             x=false;
                     }
-                    cout<<"Generez cuvintele acceptate...\n";
+                    cout<<"Generez cuvintele acceptate... Please wait!\n";
 
                     generate(graf,stare_initiala,stari_finale,matrice_vizitati,100);
                     int cnt = 0;
@@ -385,7 +257,62 @@ int main()
                         }
 
                     }
+                }
+            }
+    }
+    else {
+        cout<<"Eroare la incarcarea/generarea automatului! :(\n";
+    }
 
+    	cout<<"Goodbye!";
+
+}
+
+/** VARIANTA DFS RECURSIVA - generare cuvinte
+    Nu o mai folosesc deoarece nu e optima
+    Dar o las aici pentru ca e totusi functionala
+vector<string> results;
+void generate(string word, int nod_curent, GRAF& graf, int current_lg, vector<int>& stari_finale, vector<vector<bool>>& matrice_vizitati,int max_length) {
+    if(results.size()<=100){
+
+    if(matrice_vizitati[nod_curent][current_lg] == false && word.length() <= max_length) {
+        //cout<<"sunt la:"<<word<<' '<<nod_curent<<'\n';
+        ///ia mapul asociat nodului
+        ///itereaza prin litere
+        for(auto mp = graf[nod_curent].begin(); mp!= graf[nod_curent].end();++mp) {
+            ///adauga litera la cuvant
+            //cout<<mp->first;
+
+            ///Daca am ajuns intr-un nod marcat ca nod final => cuvant acceptat de automat
+
+                /// Verifica de unde poti pleca din nodul nod_curent cu orice caracter ///
+                /// itereaza prin vectorul dat de graf[nod_curent][char_curent] si reapeleaza functia cu caracterul urmator ///
+                char c = mp->first;
+                if(current_lg<=100) {
+                for(auto &ends : graf[nod_curent][c]) {
+                    word.push_back(c);
+
+                        if(matrice_vizitati[ends][current_lg] == false){
+                            cout<<"Plec pe "<<c<<" "<<ends<<endl;
+                            matrice_vizitati[ends][current_lg] = true;
+                            if(find(stari_finale.begin(), stari_finale.end(), ends) != stari_finale.end())
+                                {
+                                    cout<<"GASIT "<<":"<<word<<'\n';
+                                    results.push_back(word);
+                                }
+                            generate(word, ends,graf,current_lg+1, stari_finale, matrice_vizitati,max_length);
+                            matrice_vizitati[ends][current_lg] = false;
+                            word.pop_back();
+                        }
+                    }
+
+
+        }
+    }
+
+}
+}
+}       In main:
 
                  /*   ///incerc lungimi maxime pana gasesc una care imi genereaza ~ 100 elemente
                     ///daca nu exista, afisez toate cuvintele posibile
@@ -399,17 +326,6 @@ int main()
                     for (auto cuvant = results.rbegin(); cuvant != results.rend() && cnt <= 100; ++cuvant  ) {
                         cout<<"("<<cnt<<"):"<<*cuvant<<'\n';
                         cnt++;
-                    }*/
-                }
-            }
+                    }
+*/
 
-
-
-    }
-    else {
-        cout<<"Eroare la incarcarea/generarea automatului! :(\n";
-    }
-
-    	cout<<"Goodbye!";
-
-}
