@@ -75,36 +75,48 @@ bool is_accepting_state(int nod, vector<int>& stari_finale){
 }
 
 
-vector<vector<pair<int,char>>> results;
-void generate(GRAF& graf,int stare_initiala,vector<int>& stari_finale, vector<vector<bool>>& matrice_vizitati,int max_length){
-      queue<vector<pair<int,char>> > q;
-    vector<pair<int,char>> path;
-    path.push_back(make_pair(stare_initiala,' '));
 
+vector<string> results;
+map<pair<string,int>,bool> viz;
+
+void generate(GRAF& graf,int stare_initiala,vector<int>& stari_finale,int max_length){
+    queue<pair<string,int>> q;
+
+    ///setez drum start
+    pair<string,int> path;
+    path = make_pair("",stare_initiala);
+
+    viz[path] = true;
     q.push(path);
-    path.clear();
-    while (!q.empty()) {
+    while(!q.empty() && results.size()<100) {
+
+        ///iau drum
         path = q.front();
         q.pop();
-        pair<int,char> elem_p = path.back();
-        int elem = elem_p.first;
-        if(is_accepting_state(elem,stari_finale))
-            results.push_back(path);
-        if(matrice_vizitati[elem][path.size()] == false){
-            for (auto &mp: graf[elem]) {
-                for(auto ends=mp.second.begin();ends!=mp.second.end();++ends) {
-                    vector<pair<int,char>>new_path(path);
-                    if (results.size() < 100){
-                        new_path.push_back(make_pair(*ends, mp.first));
-                        q.push(new_path);
-                        }
+        int nod_last = path.second;
+        string cuv = path.first;
+
+        ///daca e nod final, add to results
+        if (is_accepting_state(nod_last,stari_finale))
+            results.push_back(cuv);
+        ///trec peste tot pe unde pot ajunge din ultimul nod
+        for(auto &mp:graf[nod_last]){
+            for(auto &nod:mp.second) {
+                ///creez cuvant auxiliar
+                string cuv_nou = cuv + mp.first;
+                auto p = make_pair(cuv_nou,nod);
+                /// daca nu s-a mai ajuns in cuvantul asta cu nodul asta
+                if (viz[p] == false) {
+                    viz[p] = true;
+                    ///adauga in queue
+                    q.push(p);
                 }
-            matrice_vizitati[elem][path.size()] = true;
+
             }
         }
-
-
     }
+
+
 
 
 }
@@ -246,16 +258,11 @@ int main()
                     }
                     cout<<"Generez cuvintele acceptate... Please wait!\n";
 
-                    generate(graf,stare_initiala,stari_finale,matrice_vizitati,100);
+                    generate(graf,stare_initiala,stari_finale,100);
                     int cnt = 0;
                     for(auto x = results.begin();x< results.end(); x++){
-                        if(cnt<100) {
-                            cout<<"("<<++cnt<<"):";
-                            for(auto &i:*x)
-                                cout<<i.second;
-                            cout<<'\n';
-                        }
-
+                            cnt++;
+                            cout<<"("<<cnt<<"):"<<*x<<'\n';
                     }
                 }
             }
